@@ -1,30 +1,38 @@
 const result = document.querySelector(".result");
 
-const params = new URLSearchParams(window.location.search);
-const id = params.get("id");
+const fetchProduct = async () => {
+  result.innerHTML = `<h2>Loading...</h2>`;
 
-const fetchData = async () => {
-  const { data } = await axios.get(`/api/3-product?id=${id}`);
-  const product = await data
-    .map((item) => {
-      if (item.id === id) {
-        const { name, url, price, desc } = item;
-        return `
-      <h1>${name}</h1>
-      <article class='product'>
-        <img class='product-img' src=${url} alt=${name} />
-        <div class="product-info">
-          <h5>${name}</h5>
-          <h5 class="price">$${price}</h5>
-          <p class="desc">${desc}</p>
-        </div>
-      </article>
-      `;
-      }
-    })
-    .join("");
-
-  result.innerHTML = product;
+  try {
+    // const id = "?id=1";
+    const id = window.location.search;
+    const {
+      data: { fields },
+    } = await axios.get(`/api/3-product${id}`);
+    const {
+      name,
+      desc,
+      price,
+      image: {
+        0: { url },
+      },
+    } = fields;
+    result.innerHTML = ` <h1 class="title">${name}</h1>
+    <article class="product">
+      <img class="product-img"
+      src=${url}
+      alt=${name}
+      />
+      <div class="product-info">
+        <h5 class="title">${name}</h5>
+        <h5 class="price">$${price}</h5>
+        <p class="desc">${desc}</p>
+      </div>
+    </article>`;
+  } catch (error) {
+    console.log(error);
+    result.innerHTML = `<h2>${error.response.data}</h2>`;
+  }
 };
 
-fetchData();
+fetchProduct();

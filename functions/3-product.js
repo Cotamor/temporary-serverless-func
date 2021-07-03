@@ -4,9 +4,10 @@ const Airtable = require("airtable-node");
 const airtable = new Airtable({ apiKey: process.env.AIRTABLE_APIKEY })
   .base("appmUJQZUIyppcl30")
   .table("products");
-console.log(airtable);
+console.log(airtable.log, airtable.config);
 
 exports.handler = async (event, context, cb) => {
+  console.log(event);
   const { id } = event.queryStringParameters;
 
   if (id) {
